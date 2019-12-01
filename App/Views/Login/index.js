@@ -35,6 +35,7 @@ class Login extends Component {
       })
       .then(async res => {
         await AsyncStorage.setItem('@Contact:token',res.data.success.token);
+        this.props.navigation.navigate('Home')
  
       })
       .catch(err => {

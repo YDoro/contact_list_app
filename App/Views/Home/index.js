@@ -1,46 +1,94 @@
 import React, {Component} from 'react';
 
-import {View, Text, StyleSheet, Dimensions, TouchableOpacity,Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Alert,
+  FlatList,
+} from 'react-native';
 import {withNavigation, NavigationEvents} from 'react-navigation';
-import { Icon } from 'native-base';
-import { FlatList } from 'react-native-gesture-handler';
+import {Icon, Row, Left, Right} from 'native-base';
 import api from '../../Services/api';
-import { thisExpression } from '@babel/types';
 import LoadScreen from '../../Components/LoadScreen';
 
 export default withNavigation(
   class Home extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-          loading: false,
-          contacts:[]
-        };
-      }
-    loadData = async ()=>{
-        Alert.alert("opa","opa");
-        this.setState({loading:true});
-        await api.get('contacts').then(async (res)=>{
-            await this.setState({contacts: res.data.contacts});
-            console.log(res.data.contacts);
-        }).catch((err)=>console.log(JSON.stringify(err.response.data)))
-        this.setState({loading:false});
-
+      super(props);
+      this.state = {
+        loading: false,
+        contacts: [],
+      };
     }
+    loadData = async () => {
+      this.setState({loading: true});
+      await api
+        .get('contacts')
+        .then(async res => {
+          await this.setState({contacts: res.data.contacts});
+          console.log(res.data.contacts);
+        })
+        .catch(err => console.log(JSON.stringify(err.response.data)));
+      this.setState({loading: false});
+    };
     render() {
       return (
-          
         <View>
-            {this.state.loading && <LoadScreen/>}
-            <NavigationEvents onWillFocus={()=>{this.loadData()}}/>
+          {this.state.loading && <LoadScreen />}
+          <NavigationEvents
+            onWillFocus={() => {
+              this.loadData();
+            }}
+          />
           <View style={styles.header}>
             <Text style={styles.title}>Contact List</Text>
           </View>
-          <TouchableOpacity style={styles.addCotainer}>
-          <Icon name="add-circle" style={styles.add}/>
+          <View>
+            <FlatList
+              data={this.state.contacts}
+              renderItem={({item}) => {
+                console.log(item);
+                return (
+                  <TouchableOpacity>
+                    <View
+                      style={{
+                        width: Dimensions.get('window').width * 0.97,
+                        height: Dimensions.get('window').height * 0.1,
+                        backgroundColor: '#95E0E8',
+                        alignSelf: 'center',
+                        marginTop: 2,
+                      }}>
+                      <View style={{marginTop: 10}}>
+                        <Text
+                          style={{marginLeft: 10, color: '#FFF', fontSize: 18}}>
+                          {item.name}
+                        </Text>
+                        <Row style={{marginTop:5,width:"90%", alignSelf:"center"}}>
+                          <Left>
+                            <Text style={{color:"#FFF"}}>{item.email}</Text>
+                          </Left>
+                          <Right>
+                            <Text style={{color:"#FFF"}} >
+                              {item.phone}
+                            </Text>
+                          </Right>
+                        </Row>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('ContactAdd')}
+            style={styles.addCotainer}>
+            <Icon name="add-circle" style={styles.add} />
           </TouchableOpacity>
-          <FlatList/>
-         
+          <FlatList />
         </View>
       );
     }
@@ -60,14 +108,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  addCotainer:{
-    position:"absolute",
-    top:Dimensions.get("window").height*0.9,
-    left:Dimensions.get("window").width*0.82
+  addCotainer: {
+    position: 'absolute',
+    top: Dimensions.get('window').height * 0.9,
+    left: Dimensions.get('window').width * 0.82,
   },
-  add:{
-      color:"#DDD",
-      transform:[{scale:3}],
-    
-  }
+  add: {
+    color: '#DDD',
+    transform: [{scale: 3}],
+  },
 });
