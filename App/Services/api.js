@@ -5,6 +5,7 @@ const api  = axios.create({
   baseURL: "https://laravel-contacts-api-test.herokuapp.com/api/",
   headers: {
     "Content-Type": "application/json; charset=utf-8",
+    "Accept":"application/json"
   }
 });
 api.interceptors.request.use(async (config)=>{
