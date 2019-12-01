@@ -55,7 +55,6 @@ class Login extends Component {
         <View style={styles.form}>
           <Item rounded bordered style={styles.input}>
             <Icon active name="mail" style={styles.input_icon}></Icon>
-
             <TextInput
               placeholder="Email"
               style={styles.placeholder_adjusts}

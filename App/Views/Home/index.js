@@ -50,7 +50,6 @@ export default withNavigation(
             <FlatList
               data={this.state.contacts}
               renderItem={({item}) => {
-                console.log(item);
                 return (
                   <TouchableOpacity>
                     <View
@@ -66,7 +65,7 @@ export default withNavigation(
                           style={{marginLeft: 10, color: '#FFF', fontSize: 18}}>
                           {item.name}
                         </Text>
-                        <Row style={{marginTop:5,width:"90%", alignSelf:"center"}}>
+                        <Row style={{marginTop:15,width:"90%", alignSelf:"center"}}>
                           <Left>
                             <Text style={{color:"#FFF"}}>{item.email}</Text>
                           </Left>

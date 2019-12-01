@@ -21,30 +21,29 @@ class Register extends Component {
     super(props);
     this.state = {
       loading: false,
-      name:null,
+      name: null,
       email: null,
       password: null,
-      c_password:null,
+      c_password: null,
       safe: true,
       safe2: true,
-
     };
   }
   sendData = async () => {
     this.setState({loading: true});
     await api
       .post('register', {
-        name:this.state.name,
+        name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        c_password:this.state.c_password
+        c_password: this.state.c_password,
       })
       .then(async res => {
-        await AsyncStorage.setItem('@Contact:token',res.data.success.token);
+        await AsyncStorage.setItem('@Contact:token', res.data.success.token);
         this.props.navigation.navigate('Home');
       })
       .catch(err => {
-          console.log(JSON.stringify(err.response.data))
+        console.log(JSON.stringify(err.response.data));
         Alert.alert('error', JSON.stringify(err.response.data.error));
       });
     this.setState({loading: false});
@@ -57,7 +56,7 @@ class Register extends Component {
         <Text style={styles.title}>Register</Text>
 
         <View style={styles.form}>
-        <Item rounded bordered style={styles.input}>
+          <Item rounded bordered style={styles.input}>
             <Icon active name="finger-print" style={styles.input_icon}></Icon>
             <TextInput
               placeholder="Name"
@@ -96,7 +95,7 @@ class Register extends Component {
             />
           </Item>
           <View>
-            <TouchableOpacity onPress={()=>this.sendData()}>
+            <TouchableOpacity onPress={() => this.sendData()}>
               <View style={styles.btn_register}>
                 <Text style={styles.text_btn}>Register</Text>
               </View>
