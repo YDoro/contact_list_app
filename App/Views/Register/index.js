@@ -16,29 +16,36 @@ import api from '../../Services/api';
 import LoadScreen from '../../Components/LoadScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
+      name:null,
       email: null,
       password: null,
+      c_password:null,
       safe: true,
+      safe2: true,
+
     };
   }
   sendData = async () => {
     this.setState({loading: true});
     await api
-      .post('login', {
+      .post('register', {
+        name:this.state.name,
         email: this.state.email,
         password: this.state.password,
+        c_password:this.state.c_password
       })
       .then(async res => {
         await AsyncStorage.setItem('@Contact:token',res.data.success.token);
- 
+        this.props.navigation.navigate('Home');
       })
       .catch(err => {
-        Alert.alert('error', err.response.data.error);
+          console.log(JSON.stringify(err.response.data))
+        Alert.alert('error', JSON.stringify(err.response.data.error));
       });
     this.setState({loading: false});
   };
@@ -47,14 +54,20 @@ class Login extends Component {
       <View style={styles.body}>
         <StatusBar backgroundColor="#49989F" barStyle="light-content" />
         {this.state.loading && <LoadScreen />}
-        <Text style={styles.title}>Contact List</Text>
-        <View>
-          <Icon name="contacts" style={styles.fakeLogo} />
-        </View>
+        <Text style={styles.title}>Register</Text>
+
         <View style={styles.form}>
+        <Item rounded bordered style={styles.input}>
+            <Icon active name="finger-print" style={styles.input_icon}></Icon>
+            <TextInput
+              placeholder="Name"
+              style={styles.placeholder_adjusts}
+              value={this.state.name}
+              onChangeText={text => this.setState({name: text})}
+            />
+          </Item>
           <Item rounded bordered style={styles.input}>
             <Icon active name="mail" style={styles.input_icon}></Icon>
-
             <TextInput
               placeholder="Email"
               style={styles.placeholder_adjusts}
@@ -72,15 +85,18 @@ class Login extends Component {
               onChangeText={text => this.setState({password: text})}
             />
           </Item>
+          <Item rounded bordered style={styles.input}>
+            <Icon active name="key" style={styles.input_icon}></Icon>
+            <TextInput
+              placeholder="Retype Password"
+              secureTextEntry={this.state.safe}
+              style={styles.placeholder_adjusts}
+              value={this.state.c_password}
+              onChangeText={text => this.setState({c_password: text})}
+            />
+          </Item>
           <View>
-            <TouchableOpacity onPress={() => this.sendData()}>
-              <View style={styles.btn_login}>
-                <Text style={styles.text_btn}>Login</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate('Register')}>
+            <TouchableOpacity onPress={()=>this.sendData()}>
               <View style={styles.btn_register}>
                 <Text style={styles.text_btn}>Register</Text>
               </View>
@@ -147,4 +163,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-export default withNavigation(Login);
+export default withNavigation(Register);

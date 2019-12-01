@@ -2,11 +2,12 @@ import { createAppContainer } from "react-navigation";
 import { createStackNavigator} from "react-navigation-stack"
 
 import {
-  Login
+  Login,
+  Register
 } from './Views';
 const AppNavigator = createStackNavigator(
   {
-    Login
+    Login,Register
   },
   {
     initialRouteName:"Login",
