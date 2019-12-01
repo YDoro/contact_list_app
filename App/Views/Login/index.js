@@ -8,9 +8,13 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {withNavigation} from 'react-navigation';
 import {Item, Icon} from 'native-base';
+import api from '../../Services/api';
+import LoadScreen from '../../Components/LoadScreen';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Login extends Component {
   constructor(props) {
@@ -22,10 +26,27 @@ class Login extends Component {
       safe: true,
     };
   }
+  sendData = async () => {
+    this.setState({loading: true});
+    await api
+      .post('login', {
+        email: this.state.email,
+        password: this.state.password,
+      })
+      .then(async res => {
+        await AsyncStorage.setItem('@Contact:token',res.data.success.token);
+ 
+      })
+      .catch(err => {
+        Alert.alert('error', err.response.data.error);
+      });
+    this.setState({loading: false});
+  };
   render() {
     return (
       <View style={styles.body}>
         <StatusBar backgroundColor="#49989F" barStyle="light-content" />
+        {this.state.loading && <LoadScreen />}
         <Text style={styles.title}>Contact List</Text>
         <View>
           <Icon name="contacts" style={styles.fakeLogo} />
@@ -52,7 +73,7 @@ class Login extends Component {
             />
           </Item>
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => this.sendData()}>
               <View style={styles.btn_login}>
                 <Text style={styles.text_btn}>Login</Text>
               </View>
