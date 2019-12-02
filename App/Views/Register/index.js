@@ -43,7 +43,6 @@ class Register extends Component {
         this.props.navigation.navigate('Home');
       })
       .catch(err => {
-        console.log(JSON.stringify(err.response.data));
         Alert.alert('error', JSON.stringify(err.response.data.error));
       });
     this.setState({loading: false});

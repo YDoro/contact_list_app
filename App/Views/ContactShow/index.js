@@ -39,7 +39,6 @@ export default withNavigation(
         await api
           .get(`contacts/${id}`)
           .then(async res => {
-            console.log(JSON.stringify(res.data));
             await this.setState({
               id: res.data.id,
               name: res.data.name,
@@ -70,7 +69,6 @@ export default withNavigation(
           this.props.navigation.navigate('Home');
         })
         .catch(err => {
-            console.log(err.response)
           Alert.alert('error', JSON.stringify(err.response.data));
         });
       this.setState({loading: false});

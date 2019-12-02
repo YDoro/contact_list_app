@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   FlatList,
+  TextInput
 } from 'react-native';
 import {withNavigation, NavigationEvents} from 'react-navigation';
-import {Icon, Row, Left, Right} from 'native-base';
+import {Icon, Row, Left, Right,Item} from 'native-base';
 import api from '../../Services/api';
 import LoadScreen from '../../Components/LoadScreen';
 
@@ -29,9 +30,10 @@ export default withNavigation(
         .get('contacts')
         .then(async res => {
           await this.setState({contacts: res.data.contacts});
-          console.log(res.data.contacts);
         })
-        .catch(err => console.log(JSON.stringify(err.response.data)));
+        .catch(err => Alert.alert('error', JSON.stringify(err.response.data)));
+        
+
       this.setState({loading: false});
     };
     confirmDelete = (id,name)=>{
@@ -55,6 +57,13 @@ export default withNavigation(
         this.getData();
       }).catch(err => Alert.alert("Error",JSON.stringify(err.response.data)));
     }
+    searchContact = async (text)=>{
+      await api.post('search',{
+        query:text
+      }).then((res)=>{
+        this.setState({contacts:res.data.contacts})
+      }).catch((err)=>console.log(err.response))
+    }
     render() {
       return (
         <View>
@@ -68,6 +77,14 @@ export default withNavigation(
             <Text style={styles.title}>Contact List</Text>
           </View>
           <View>
+          <Item rounded bordered style={styles.input}>
+            <Icon active name="search" style={styles.input_icon}></Icon>
+            <TextInput
+              placeholder="Search"
+              onChangeText={(text)=>this.searchContact(text)}
+
+            />
+          </Item>
             <FlatList
               data={this.state.contacts}
               renderItem={({item}) => {
@@ -148,5 +165,15 @@ const styles = StyleSheet.create({
   add: {
     color: '#DDD',
     transform: [{scale: 3}],
+  },
+  input: {
+    width:"90%",
+    alignSelf:"center",
+    height:45,
+    marginTop:5
+  },
+  input_icon: {color: '#DDD', marginLeft: 5, bottom: '1%'},
+  placeholder_adjusts: {
+
   },
 });
