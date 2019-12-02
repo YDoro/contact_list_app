@@ -3,11 +3,11 @@ import { createStackNavigator} from "react-navigation-stack"
 
 import {
   Login,
-  Register, Home, ContactAdd
+  Register, Home, ContactAdd,ContactShow
 } from './Views';
 const AppNavigator = createStackNavigator(
   {
-    Login,Register,Home,ContactAdd
+    Login,Register,Home,ContactAdd, ContactShow
   },
   {
     initialRouteName:"Login",

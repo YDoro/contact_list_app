@@ -51,7 +51,7 @@ export default withNavigation(
               data={this.state.contacts}
               renderItem={({item}) => {
                 return (
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('ContactShow',{id:item.id})}>
                     <View
                       style={{
                         width: Dimensions.get('window').width * 0.97,
