@@ -23,7 +23,7 @@ export default withNavigation(
         contacts: [],
       };
     }
-    loadData = async () => {
+    getData = async () => {
       this.setState({loading: true});
       await api
         .get('contacts')
@@ -34,13 +34,34 @@ export default withNavigation(
         .catch(err => console.log(JSON.stringify(err.response.data)));
       this.setState({loading: false});
     };
+    confirmDelete = (id,name)=>{
+      Alert.alert(
+        'Warning',
+        `Do you realy want to delete ${name}?`,
+        [
+                    {
+            text: 'No',
+            style: 'cancel',
+          },
+          {text: 'Yes', onPress: () => this.deleteContact(id)},
+        ],
+        // {cancelable: false},
+      );
+      
+    }
+    deleteContact = async (id)=>{
+      await api.delete(`contacts/${id}`).then((res)=>{
+        Alert.alert("Success","contact successfully deleted!");
+        this.getData();
+      }).catch(err => Alert.alert("Error",JSON.stringify(err.response.data)));
+    }
     render() {
       return (
         <View>
           {this.state.loading && <LoadScreen />}
           <NavigationEvents
             onWillFocus={() => {
-              this.loadData();
+              this.getData();
             }}
           />
           <View style={styles.header}>
@@ -51,7 +72,13 @@ export default withNavigation(
               data={this.state.contacts}
               renderItem={({item}) => {
                 return (
-                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('ContactShow',{id:item.id})}>
+                  <TouchableOpacity
+                    onLongPress={() => this.confirmDelete(item.id,item.name)}
+                    onPress={() =>
+                      this.props.navigation.navigate('ContactShow', {
+                        id: item.id,
+                      })
+                    }>
                     <View
                       style={{
                         width: Dimensions.get('window').width * 0.97,
@@ -65,14 +92,17 @@ export default withNavigation(
                           style={{marginLeft: 10, color: '#FFF', fontSize: 18}}>
                           {item.name}
                         </Text>
-                        <Row style={{marginTop:15,width:"90%", alignSelf:"center"}}>
+                        <Row
+                          style={{
+                            marginTop: 15,
+                            width: '90%',
+                            alignSelf: 'center',
+                          }}>
                           <Left>
-                            <Text style={{color:"#FFF"}}>{item.email}</Text>
+                            <Text style={{color: '#FFF'}}>{item.email}</Text>
                           </Left>
                           <Right>
-                            <Text style={{color:"#FFF"}} >
-                              {item.phone}
-                            </Text>
+                            <Text style={{color: '#FFF'}}>{item.phone}</Text>
                           </Right>
                         </Row>
                       </View>
@@ -80,6 +110,9 @@ export default withNavigation(
                   </TouchableOpacity>
                 );
               }}
+              ListFooterComponent={()=>(this.state.contacts.length>0&&
+                <View style={{alignSelf:"center",alignItems:"center"}}><Text>Press and hold to delete</Text></View>
+              )}
             />
           </View>
           <TouchableOpacity
